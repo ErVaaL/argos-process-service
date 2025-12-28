@@ -1,19 +1,20 @@
-package com.erval.argos.process.bootstrap;
+package com.erval.argos.process.bootstrap.config;
 
 import com.erval.argos.contracts.resource.v1.ResourceQueryServiceGrpc;
 import com.erval.argos.process.adapters.grpc.GrpcResourceQueryAdapter;
+import com.erval.argos.process.adapters.rabbitmq.publisher.RabbitReportRequestPublisherAdapter;
 import com.erval.argos.process.application.port.in.StartReportJobUseCase;
 import com.erval.argos.process.application.port.out.ProcessJobRepositoryPort;
+import com.erval.argos.process.application.port.out.ReportRequestPublisherPort;
 import com.erval.argos.process.application.port.out.ResourceQueryPort;
 import com.erval.argos.process.application.service.JobService;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import jakarta.annotation.PreDestroy;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import java.util.concurrent.TimeUnit;
 
 @Configuration
 public class ProcessWiringConfig {
@@ -35,10 +36,14 @@ public class ProcessWiringConfig {
     }
 
     @PreDestroy
-    public void close() throws InterruptedException {
-        if (resourceChannel != null) {
-            resourceChannel.shutdown();
-            resourceChannel.awaitTermination(3, TimeUnit.SECONDS);
+    public void close() {
+        if (resourceChannel == null) return;
+        resourceChannel.shutdown();
+        try {
+            resourceChannel.awaitTermination(2, java.util.concurrent.TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        } finally {
             resourceChannel.shutdownNow();
         }
     }
@@ -54,10 +59,16 @@ public class ProcessWiringConfig {
     }
 
     @Bean
+    public ReportRequestPublisherPort reportRequestPublisherPort(RabbitTemplate rabbitTemplate) {
+        return new RabbitReportRequestPublisherAdapter(rabbitTemplate);
+    }
+
+    @Bean
     public StartReportJobUseCase startReportJobUseCase(
         ProcessJobRepositoryPort repo,
-        ResourceQueryPort resourceQuery) {
-        return new JobService(repo, resourceQuery);
+        ResourceQueryPort resourceQuery,
+        ReportRequestPublisherPort publisher) {
+        return new JobService(repo, resourceQuery, publisher);
 
     }
 

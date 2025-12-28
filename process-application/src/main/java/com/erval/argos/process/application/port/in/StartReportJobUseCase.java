@@ -6,6 +6,6 @@ public interface StartReportJobUseCase {
 
     ProcessJob createReportJob(CreateReportJobCommand cmd);
 
-    record CreateReportJobCommand(String deviceId) {
+    record CreateReportJobCommand(String deviceId, String from, String to) {
     }
 }

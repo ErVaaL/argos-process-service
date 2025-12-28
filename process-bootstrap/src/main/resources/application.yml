@@ -1,14 +1,27 @@
 server:
-    port: 8082
+  port: 8082
 
 spring:
-    application:
-        name: process-service
-    mongodb:
-        uri: mongodb://localhost:27017/argos_process
+  application:
+    name: process-service
+  mongodb:
+    uri: mongodb://localhost:27017/argos_process
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
 
+logging:
+  level:
+    root: INFO
+    org.springframework.amqp: INFO
+    org.springframework.amqp.rabbit.listener: INFO
+    org.springframework.data.mongodb: WARN
+    io.grpc: WARN
+    com.erval.argos: DEBUG
 argos:
-    resource:
-        grpc:
-            host: localhost
-            port: 9091
+  resource:
+    grpc:
+      host: localhost
+      port: 9091

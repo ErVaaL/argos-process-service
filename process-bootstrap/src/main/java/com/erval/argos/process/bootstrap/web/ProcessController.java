@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/process")
 @RequiredArgsConstructor
 public class ProcessController {
 

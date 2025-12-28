@@ -5,12 +5,12 @@ spring:
   application:
     name: process-service
   mongodb:
-    uri: mongodb://localhost:27017/argos_process
+    uri: ${SPRING_MONGODB_URI}
   rabbitmq:
-    host: localhost
-    port: 5672
-    username: guest
-    password: guest
+    host: ${SPRING_RABBITMQ_HOST}
+    port: ${SPRING_RABBITMQ_PORT}
+    username: ${SPRING_RABBITMQ_USERNAME}
+    password: ${SPRING_RABBITMQ_PASSWORD}
 
 logging:
   level:
@@ -23,5 +23,5 @@ logging:
 argos:
   resource:
     grpc:
-      host: localhost
-      port: 9091
+      host: ${ARGOS_RESOURCE_GRPC_HOST}
+      port: ${ARGOS_RESOURCE_GRPC_PORT}

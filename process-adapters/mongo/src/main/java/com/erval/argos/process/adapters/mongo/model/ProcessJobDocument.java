@@ -14,14 +14,16 @@ public record ProcessJobDocument(
         @Id String id,
         JobType jobType,
         String deviceId,
+        String deviceName,
         JobStatus status,
         Instant createdAt) {
 
     public static ProcessJobDocument fromDomain(ProcessJob job) {
-        return new ProcessJobDocument(job.id(), job.type(), job.deviceId(), job.status(), job.createdAt());
+        return new ProcessJobDocument(job.id(), job.type(), job.deviceId(), job.deviceName(), job.status(),
+                job.createdAt());
     }
 
     public ProcessJob toDomain() {
-        return new ProcessJob(id, jobType, deviceId, status, createdAt);
+        return new ProcessJob(id, jobType, deviceId, deviceName, status, createdAt);
     }
 }

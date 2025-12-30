@@ -64,12 +64,11 @@ public class ProcessWiringConfig {
     }
 
     @Bean
-    public StartReportJobUseCase startReportJobUseCase(
+    public JobService startReportJobUseCase(
         ProcessJobRepositoryPort repo,
         ResourceQueryPort resourceQuery,
         ReportRequestPublisherPort publisher) {
         return new JobService(repo, resourceQuery, publisher);
-
     }
 
 }

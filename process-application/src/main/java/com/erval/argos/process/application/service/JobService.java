@@ -3,18 +3,26 @@ package com.erval.argos.process.application.service;
 import java.time.Instant;
 import java.util.UUID;
 
+import com.erval.argos.process.application.port.in.QueryReportJobsUseCase;
 import com.erval.argos.process.application.port.in.StartReportJobUseCase;
 import com.erval.argos.process.application.port.out.ProcessJobRepositoryPort;
 import com.erval.argos.process.application.port.out.ReportRequestPublisherPort;
 import com.erval.argos.process.application.port.out.ResourceQueryPort;
+import com.erval.argos.process.core.domain.PageRequest;
+import com.erval.argos.process.core.domain.PageResult;
 import com.erval.argos.process.core.domain.job.JobStatus;
 import com.erval.argos.process.core.domain.job.JobType;
 import com.erval.argos.process.core.domain.job.ProcessJob;
 
 public record JobService(
-    ProcessJobRepositoryPort repo,
-    ResourceQueryPort resourceQuery,
-    ReportRequestPublisherPort publisher) implements StartReportJobUseCase {
+        ProcessJobRepositoryPort repo,
+        ResourceQueryPort resourceQuery,
+        ReportRequestPublisherPort publisher) implements StartReportJobUseCase, QueryReportJobsUseCase {
+
+    @Override
+    public PageResult<ProcessJob> listReportJobs(PageRequest pageRequest) {
+        return repo.findAll(pageRequest);
+    }
 
     @Override
     public ProcessJob createReportJob(CreateReportJobCommand cmd) {
@@ -38,7 +46,8 @@ public record JobService(
         ProcessJob job = new ProcessJob(
                 id,
                 JobType.REPORT_PDF,
-                cmd.deviceId(),
+                device.id(),
+                device.name(),
                 JobStatus.REQUESTED,
                 Instant.now());
         var saved = repo.save(job);

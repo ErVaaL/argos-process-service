@@ -20,14 +20,14 @@ public class GrpcResourceQueryAdapter implements ResourceQueryPort {
         var res = stub.getDevice(req);
 
         if (!res.getFound())
-            return new DeviceInfo(null, false, false);
+            return new DeviceInfo(null, null, false, false);
 
         var d = res.getDevice();
         return new DeviceInfo(
                 d.getId(),
+                d.getName(),
                 d.getActive(),
-                true
-                );
+                true);
     }
 
 }

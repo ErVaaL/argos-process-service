@@ -5,6 +5,8 @@ import java.util.Optional;
 import com.erval.argos.process.adapters.mongo.model.ProcessJobDocument;
 import com.erval.argos.process.adapters.mongo.repositories.ProcessJobMongoRepository;
 import com.erval.argos.process.application.port.out.ProcessJobRepositoryPort;
+import com.erval.argos.process.core.domain.PageRequest;
+import com.erval.argos.process.core.domain.PageResult;
 import com.erval.argos.process.core.domain.job.ProcessJob;
 
 import lombok.RequiredArgsConstructor;
@@ -26,6 +28,14 @@ public class MongoProcessJobRepositoryAdapter implements ProcessJobRepositoryPor
     public ProcessJob save(ProcessJob job) {
         var saved = repo.save(ProcessJobDocument.fromDomain(job));
         return saved.toDomain();
+    }
+
+    @Override
+    public PageResult<ProcessJob> findAll(PageRequest pageRequest) {
+        var pageable = org.springframework.data.domain.PageRequest.of(pageRequest.page(), pageRequest.size());
+        var page = repo.findAll(pageable);
+        var jobs = page.map(ProcessJobDocument::toDomain).getContent();
+        return new PageResult<>(jobs, jobs.size(), pageRequest.page(), pageRequest.size());
     }
 
 }

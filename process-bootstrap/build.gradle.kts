@@ -5,6 +5,7 @@ plugins {
 dependencies {
     implementation(project(":services:process-service:process-application"))
     implementation(project(":services:process-service:process-adapters:grpc"))
+    implementation(project(":services:process-service:process-adapters:excel"))
     implementation(project(":services:process-service:process-adapters:mongo"))
     implementation(project(":services:process-service:process-adapters:rabbitmq"))
 

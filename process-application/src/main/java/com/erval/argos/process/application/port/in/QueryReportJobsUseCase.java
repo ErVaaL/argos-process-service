@@ -5,5 +5,7 @@ import com.erval.argos.process.core.domain.PageResult;
 import com.erval.argos.process.core.domain.job.ProcessJob;
 
 public interface QueryReportJobsUseCase {
-    PageResult<ProcessJob> listReportJobs(PageRequest pageRequest);
+  PageResult<ProcessJob> listReportJobs(PageRequest pageRequest);
+
+  byte[] exportPerformedJobs(String filter);
 }

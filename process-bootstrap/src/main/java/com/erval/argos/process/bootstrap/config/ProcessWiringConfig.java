@@ -2,8 +2,10 @@ package com.erval.argos.process.bootstrap.config;
 
 import com.erval.argos.contracts.resource.v1.ResourceQueryServiceGrpc;
 import com.erval.argos.process.adapters.grpc.GrpcResourceQueryAdapter;
+import com.erval.argos.process.adapters.excel.ExcelProcessJobExporterAdapter;
 import com.erval.argos.process.adapters.rabbitmq.publisher.RabbitReportRequestPublisherAdapter;
 import com.erval.argos.process.application.port.in.StartReportJobUseCase;
+import com.erval.argos.process.application.port.out.ProcessJobExcelExporterPort;
 import com.erval.argos.process.application.port.out.ProcessJobRepositoryPort;
 import com.erval.argos.process.application.port.out.ReportRequestPublisherPort;
 import com.erval.argos.process.application.port.out.ResourceQueryPort;
@@ -67,8 +69,14 @@ public class ProcessWiringConfig {
     public JobService startReportJobUseCase(
         ProcessJobRepositoryPort repo,
         ResourceQueryPort resourceQuery,
-        ReportRequestPublisherPort publisher) {
-        return new JobService(repo, resourceQuery, publisher);
+        ReportRequestPublisherPort publisher,
+        ProcessJobExcelExporterPort excelExporter) {
+        return new JobService(repo, resourceQuery, publisher, excelExporter);
+    }
+
+    @Bean
+    public ProcessJobExcelExporterPort processJobExcelExporterPort() {
+        return new ExcelProcessJobExporterAdapter();
     }
 
 }

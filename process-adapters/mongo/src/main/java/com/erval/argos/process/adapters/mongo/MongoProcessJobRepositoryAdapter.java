@@ -1,5 +1,6 @@
 package com.erval.argos.process.adapters.mongo;
 
+import java.util.List;
 import java.util.Optional;
 
 import com.erval.argos.process.adapters.mongo.model.ProcessJobDocument;
@@ -36,6 +37,13 @@ public class MongoProcessJobRepositoryAdapter implements ProcessJobRepositoryPor
         var page = repo.findAll(pageable);
         var jobs = page.map(ProcessJobDocument::toDomain).getContent();
         return new PageResult<>(jobs, jobs.size(), pageRequest.page(), pageRequest.size());
+    }
+
+    @Override
+    public List<ProcessJob> findAll() {
+        return repo.findAll().stream()
+            .map(ProcessJobDocument::toDomain)
+            .toList();
     }
 
 }

@@ -3,7 +3,7 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":services:process-service:process-application"))
+    implementation(project(":process-application"))
     implementation("org.apache.poi:poi-ooxml:5.5.1")
 
     compileOnly("org.projectlombok:lombok:1.18.42")

@@ -4,8 +4,8 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":services:process-service:process-application"))
-    implementation(project(":services:process-service:process-core"))
+    implementation(project(":process-application"))
+    implementation(project(":process-core"))
 
     compileOnly("org.projectlombok:lombok:1.18.42")
     annotationProcessor("org.projectlombok:lombok:1.18.42")

@@ -3,5 +3,5 @@ plugins {
 }
 
 dependencies {
-    api(project(":services:process-service:process-core"))
+    api(project(":process-core"))
 }

@@ -4,7 +4,7 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":services:process-service:process-application"))
+    implementation(project(":process-application"))
 
     implementation("org.springframework.boot:spring-boot-starter-amqp")
 

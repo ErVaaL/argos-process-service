@@ -3,8 +3,8 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":services:process-service:process-application"))
-    api(project(":contracts"))
+    implementation(project(":process-application"))
+    api("com.erval.argos:argos-contracts:0.0.1-SNAPSHOT")
 
     compileOnly("org.projectlombok:lombok:1.18.42")
     annotationProcessor("org.projectlombok:lombok:1.18.42")

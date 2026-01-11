@@ -36,6 +36,15 @@ public record PageResult<T>(
         return (int) Math.ceil((double) totalElements / size);
     }
 
+    /**
+     * Creates a collector that wraps a list into a {@link PageResult}.
+     *
+     * @param totalElements total elements across all pages
+     * @param page          current page index
+     * @param size          page size
+     * @param <T>           item type
+     * @return collector producing a page result
+     */
     public static <T> java.util.stream.Collector<T, ?, PageResult<T>> collector(long totalElements, int page,
             int size) {
         return java.util.stream.Collectors.collectingAndThen(

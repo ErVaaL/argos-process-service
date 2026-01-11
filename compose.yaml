@@ -22,30 +22,63 @@ services:
       timeout: 3s
       retries: 20
 
+  process-keycloak:
+    image: quay.io/keycloak/keycloak:26.0.7
+    container_name: argos-process-keycloak
+    command: ["start-dev"]
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_HEALTH_ENABLED: "true"
+    ports:
+      - "8080:8080"
+    networks: [argos_net]
+
+  process-rabbitmq:
+    image: rabbitmq:4.2.2-management
+    container_name: argos-process-rabbitmq
+    ports:
+      - "15672:15672"
+    networks: [argos_net]
+
   process:
     image: ghcr.io/ervaal/argos-process-service:main
-    # build:
-    #   context: .
-    #   dockerfile: process-bootstrap/Dockerfile
+    build:
+      context: .
+      dockerfile: process-bootstrap/Dockerfile
+      secrets:
+        - source: gh_user
+        - source: gh_token
     container_name: argos-process
     environment:
       SPRING_MONGODB_URI: mongodb://root:root@process-mongo:27017/argos_process?authSource=admin
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: http://process-keycloak:8080/realms/master
       ARGOS_RESOURCE_GRPC_HOST: resource
       ARGOS_RESOURCE_GRPC_PORT: 9091
-      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_HOST: process-rabbitmq
       SPRING_RABBITMQ_PORT: 5672
       SPRING_RABBITMQ_USERNAME: guest
       SPRING_RABBITMQ_PASSWORD: guest
     depends_on:
       process-mongo:
         condition: service_healthy
+      process-keycloak:
+        condition: service_started
+      process-rabbitmq:
+        condition: service_started
     ports:
       - "8082:8082"
     networks: [argos_net]
 
 networks:
   argos_net:
-    external: true
+    name: argos_net
 
 volumes:
   process_mongo_data:
+
+secrets:
+  gh_user:
+    environment: GH_USER
+  gh_token:
+    environment: GH_TOKEN

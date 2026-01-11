@@ -10,12 +10,22 @@ import org.springframework.security.web.SecurityFilterChain;
 
 import lombok.RequiredArgsConstructor;
 
+/**
+ * Security configuration for the process service resource server.
+ */
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
+  /**
+   * Configures JWT-based authentication and permits health checks.
+   *
+   * @param http security builder
+   * @return configured security filter chain
+   * @throws Exception when configuration fails
+   */
   @Bean
   SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     return http

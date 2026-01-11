@@ -6,11 +6,20 @@ import com.erval.argos.process.application.port.out.ResourceQueryPort;
 
 import lombok.RequiredArgsConstructor;
 
+/**
+ * gRPC adapter that queries the resource service for device metadata.
+ */
 @RequiredArgsConstructor
 public class GrpcResourceQueryAdapter implements ResourceQueryPort {
 
     private final ResourceQueryServiceGrpc.ResourceQueryServiceBlockingStub stub;
 
+    /**
+     * Fetches device data and maps it to a lightweight DTO.
+     *
+     * @param deviceId device identifier
+     * @return device info including a found flag
+     */
     @Override
     public ResourceQueryPort.DeviceInfo getDevice(String deviceId) {
         var req = GetDeviceRequest.newBuilder()

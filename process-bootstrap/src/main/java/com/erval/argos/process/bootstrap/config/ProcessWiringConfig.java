@@ -18,12 +18,22 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * Wires application services and external adapters for the process service.
+ */
 @Configuration
 public class ProcessWiringConfig {
 
 
     private ManagedChannel resourceChannel;
 
+    /**
+     * Creates a gRPC channel to the resource service.
+     *
+     * @param host resource gRPC host
+     * @param port resource gRPC port
+     * @return managed channel
+     */
     @Bean
     public ManagedChannel resourceChannel(
         @Value("${argos.resource.grpc.host:localhost}") String host,
@@ -37,6 +47,9 @@ public class ProcessWiringConfig {
         return this.resourceChannel;
     }
 
+    /**
+     * Closes the gRPC channel on shutdown.
+     */
     @PreDestroy
     public void close() {
         if (resourceChannel == null) return;
@@ -50,21 +63,48 @@ public class ProcessWiringConfig {
         }
     }
 
+    /**
+     * Builds a blocking stub for resource queries.
+     *
+     * @param resourceChannel gRPC channel
+     * @return blocking stub
+     */
     @Bean
     ResourceQueryServiceGrpc.ResourceQueryServiceBlockingStub resourceStub(ManagedChannel resourceChannel) {
         return ResourceQueryServiceGrpc.newBlockingStub(resourceChannel);
     }
 
+    /**
+     * Exposes the resource query port backed by gRPC.
+     *
+     * @param stub gRPC blocking stub
+     * @return resource query port
+     */
     @Bean
     public ResourceQueryPort resourceQueryPort(ResourceQueryServiceGrpc.ResourceQueryServiceBlockingStub stub) {
         return new GrpcResourceQueryAdapter(stub);
     }
 
+    /**
+     * Exposes the report request publisher backed by RabbitMQ.
+     *
+     * @param rabbitTemplate Rabbit template
+     * @return report request publisher
+     */
     @Bean
     public ReportRequestPublisherPort reportRequestPublisherPort(RabbitTemplate rabbitTemplate) {
         return new RabbitReportRequestPublisherAdapter(rabbitTemplate);
     }
 
+    /**
+     * Wires the job service use case.
+     *
+     * @param repo job repository port
+     * @param resourceQuery resource query port
+     * @param publisher report request publisher
+     * @param excelExporter Excel exporter port
+     * @return job service instance
+     */
     @Bean
     public JobService startReportJobUseCase(
         ProcessJobRepositoryPort repo,
@@ -74,6 +114,11 @@ public class ProcessWiringConfig {
         return new JobService(repo, resourceQuery, publisher, excelExporter);
     }
 
+    /**
+     * Provides the Excel exporter adapter.
+     *
+     * @return Excel exporter
+     */
     @Bean
     public ProcessJobExcelExporterPort processJobExcelExporterPort() {
         return new ExcelProcessJobExporterAdapter();

@@ -10,6 +10,9 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+/**
+ * Excel exporter that renders process jobs into a worksheet.
+ */
 public class ExcelProcessJobExporterAdapter implements ProcessJobExcelExporterPort {
 
     private static final String[] HEADERS = {
@@ -21,6 +24,13 @@ public class ExcelProcessJobExporterAdapter implements ProcessJobExcelExporterPo
         "Created At"
     };
 
+    /**
+     * Exports the jobs list into a single-sheet XLSX document.
+     *
+     * @param jobs jobs to export
+     * @return XLSX bytes
+     * @throws IllegalStateException when the document cannot be written
+     */
     @Override
     public byte[] export(List<ProcessJob> jobs) {
         try (var workbook = new XSSFWorkbook(); var output = new ByteArrayOutputStream()) {
